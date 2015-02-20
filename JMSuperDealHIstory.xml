@@ -1,0 +1,93 @@
+<GuiXml>
+    <Controls>
+
+        <!--
+            History window
+        -->
+        <TopLevelControl name="JMSuperDealGuiHistoryWindow" mouseEnabled="true" movable="true" hidden="true">
+            <Dimensions x="1000" y="400" />
+            <Anchor point="CENTER" relativePoint="CENTER" />
+
+            <Controls>
+                <Backdrop name="$(parent)Background" inherits="ZO_ThinBackdrop" />
+                <!--<Backdrop name="$(parent)ResultBackground" inherits="ZO_ThinBackdrop">-->
+                    <!--<Dimensions x="900" y="300" />-->
+                    <!--<Anchor point="TOPLEFT" offsetX="50" offsetY="105" />-->
+                <!--</Backdrop>-->
+
+                <!--
+                    Buy info
+                -->
+
+                <!-- Item name and icon -->
+                <Texture name="$(parent)_Buy_ItemIcon" alpha="1">
+                    <Dimensions x="54" y="54" />
+                    <Anchor point="TOPLEFT" offsetX="10" offsetY="10" />
+                    <TextureCoords left="0" right="1" top="0" bottom="1" />
+                </Texture>
+                <Label name="$(parent)_Buy_ItemName" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="LEFT" text="">
+                    <Dimensions x="300" y="28" />
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" offsetY="10" offsetX="80" />
+                </Label>
+                <Label name="$(parent)_Buy_ItemId" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="LEFT" text="">
+                    <Dimensions x="200" y="28" />
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)_Buy_ItemName" offsetY="22" offsetX="0" />
+                </Label>
+
+                <!-- Buy price -->
+                <Texture name="$(parent)_Buy_PriceIcon" textureFile="EsoUI/Art/currency/currency_gold.dds">
+                    <Dimensions x="16" y="16" />
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)_Buy_ItemName" relativePoint="TOPLEFT" offsetX="320" offsetY="6" />
+                </Texture>
+                <Label name="$(parent)_Buy_Price" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="LEFT" text="">
+                    <Dimensions x="100" y="28" />
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)_Buy_ItemName" offsetY="0" offsetX="340" />
+                </Label>
+
+                <Label name="$(parent)_Buy_Quantity" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="LEFT" text="">
+                    <Dimensions x="50" y="28" />
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)_Buy_Price" offsetY="0" offsetX="120" />
+                </Label>
+
+                <Texture name="$(parent)_Buy_PieceIcon" textureFile="EsoUI/Art/currency/currency_gold.dds">
+                    <Dimensions x="16" y="16" />
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)_Buy_Quantity" relativePoint="TOPLEFT" offsetX="70" offsetY="6" />
+                </Texture>
+                <Label name="$(parent)_Buy_Piece" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="LEFT" text="">
+                    <Dimensions x="100" y="28" />
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)_Buy_Quantity" offsetY="0" offsetX="90" />
+                </Label>
+
+                <!-- Seller and guild -->
+                <Label name="$(parent)_Buy_Seller" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="LEFT" text="">
+                    <Dimensions x="400" y="28" />
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)_Buy_ItemName" offsetY="22" offsetX="340" />
+                </Label>
+                <!--<Label name="$(parent)_Buy_GuildName" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"-->
+                       <!--verticalAlignment="CENTER" horizontalAlignment="LEFT" text="">-->
+                    <!--<Dimensions x="200" y="28" />-->
+                    <!--<Anchor point="TOPLEFT" relativeTo="$(parent)_Buy_Seller" offsetY="0" offsetX="220" />-->
+                <!--</Label>-->
+
+                <!--
+                    History window buttons
+                -->
+
+                <!-- Close button -->
+                <Button name="$(parent)CloseButton" inherits="ZO_DefaultButton" text="Close">
+                    <Dimensions x="120" y="30" />
+                    <Anchor point="BOTTOMRIGHT" offsetX="-5" offsetY="-20" />
+                    <OnClicked>
+                        JMSuperDealGuiHistoryWindow:SetHidden(true)
+                    </OnClicked>
+                </Button>
+            </Controls>
+        </TopLevelControl>
+    </Controls>
+</GuiXml>

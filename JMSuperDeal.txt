@@ -1,0 +1,13 @@
+## Title: JMSuperDeal
+## APIVersion: 100010
+## DependsOn: JMTradingHouseSnapshot JMGuildSaleHistoryTracker
+## SavedVariables: JMSuperDealSavedVariables
+## Version: 0.1
+## Author: Jordy Moos
+## Description: SUPER DEAL!
+
+JMSuperDealHistory.xml
+JMSuperDeal.xml
+
+JMSuperDealHistory.lua
+JMSuperDeal.lua

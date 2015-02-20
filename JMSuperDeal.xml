@@ -1,0 +1,167 @@
+<GuiXml>
+    <Controls>
+
+        <!--
+            Main window
+        -->
+        <TopLevelControl name="JMSuperDealGuiMainWindow" mouseEnabled="true" movable="true" hidden="true">
+            <Dimensions x="1000" y="500" />
+            <Anchor point="TOP" offsetY="50" relativePoint="TOPCENTER" />
+
+            <Controls>
+                <Backdrop name="$(parent)Background" inherits="ZO_ThinBackdrop" />
+                <Backdrop name="$(parent)ResultBackground" inherits="ZO_ThinBackdrop">
+                    <Dimensions x="900" y="300" />
+                    <Anchor point="TOPLEFT" offsetX="50" offsetY="105" />
+                </Backdrop>
+
+                <!--
+                    Table header
+                -->
+
+                <!-- Profit header -->
+                <Label name="JMSuperDealResultHeaderProfit" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="CENTER" text="Profit">
+                    <Dimensions x="140" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetY="70" offsetX="325" />
+                </Label>
+
+                <!-- Buy header -->
+                <Label name="JMSuperDealResultHeaderBuy" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="CENTER" text="Buy">
+                    <Dimensions x="110" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetY="70" offsetX="480" />
+                </Label>
+
+                <!-- Guild header -->
+                <Label name="JMSuperDealResultHeaderGuild" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="CENTER" text="Guild">
+                    <Dimensions x="110" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetY="70" offsetX="575" />
+                </Label>
+
+                <!-- Sell header -->
+                <Label name="JMSuperDealResultHeaderSell" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="CENTER" text="Sell">
+                    <Dimensions x="110" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetY="70" offsetX="670" />
+                </Label>
+
+                <!-- Table pagination summary -->
+                <Label name="JMSuperDealResultPaginationSummary" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="CENTER">
+                    <Dimensions x="140" y="28" />
+                    <Anchor point="BOTTOMLEFT" relativeTo="$(parent)" offsetY="-60" offsetX="50" />
+                </Label>
+
+                <!--
+                    Main window buttons
+                -->
+
+                <!-- Parse button -->
+                <Button name="$(parent)ScanButton" inherits="ZO_DefaultButton" text="Parse">
+                    <Dimensions x="120" y="30" />
+                    <Anchor point="BOTTOMLEFT" offsetX="5" offsetY="-20" />
+                    <OnClicked>
+                        JMSuperDeal.parse()
+                    </OnClicked>
+                </Button>
+
+                <!-- Close button -->
+                <Button name="$(parent)CloseButton" inherits="ZO_DefaultButton" text="Close">
+                    <Dimensions x="120" y="30" />
+                    <Anchor point="BOTTOMRIGHT" offsetX="-5" offsetY="-20" />
+                    <OnClicked>
+                        JMSuperDealGuiMainWindow:SetHidden(true)
+                    </OnClicked>
+                </Button>
+            </Controls>
+        </TopLevelControl>
+
+        <!--
+            Toggle button that shows the main window.
+            Placed on the official trading house window
+        -->
+        <Button name="JMSuperDealGuiOpenButton" inherits="ZO_DefaultButton" text="JMSuperDeal">
+            <Anchor point="BOTTOM" relativeTo="JMTradingHouseSnapshotGuiOpenButton" relativePoint="BOTTOM" offsetY="50" />
+            <OnClicked>
+                JMSuperDealGuiMainWindow:ToggleHidden()
+                JMSuperDealGuiMainWindow:BringWindowToTop()
+            </OnClicked>
+        </Button>
+
+        <!--
+            Result row
+        -->
+        <Button name="JMSuperDealResultRow" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS" virtual="true"
+                verticalAlignment="CENTER" horizontalAlignment="LEFT">
+            <Dimensions x="900" y="28" />
+            <Anchor point="TOPLEFT" relativeTo="JMSuperDealGuiMainWindowResultBackground" />
+
+            <!--<OnClicked>-->
+                <!--JMSuperDealGuiDetailWindow:show(self)-->
+            <!--</OnClicked>-->
+
+            <Controls>
+                <Backdrop name="$(parent)Backgroud" inherits="ZO_ThinBackdrop" />
+
+                <!-- Item name -->
+                <Label name="$(parent)ItemName" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="LEFT">
+                    <Dimensions x="240" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetX="10" />
+                </Label>
+
+                <!-- Profit percentage -->
+                <Label name="$(parent)ProfitPercentage" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="RIGHT">
+                    <Dimensions x="80" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetX="260" />
+                </Label>
+
+                <!-- Profit value -->
+                <Label name="$(parent)ProfitValue" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="RIGHT">
+                    <Dimensions x="50" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetX="350" />
+                </Label>
+
+                <!-- Item buy price per piece -->
+                <Label name="$(parent)BuyPricePerPiece" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="RIGHT">
+                    <Dimensions x="60" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetX="410" />
+                </Label>
+
+                <!-- Item buy stack count -->
+                <Label name="$(parent)BuyStackCount" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="RIGHT">
+                    <Dimensions x="40" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetX="480" />
+                </Label>
+
+                <!-- Guild ids -->
+                <Label name="$(parent)GuildIds" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="RIGHT">
+                    <Dimensions x="60" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetX="530" />
+                </Label>
+
+                <!-- Item sell price per piece -->
+                <Label name="$(parent)SellPricePerPiece" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="RIGHT">
+                    <Dimensions x="60" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetX="600" />
+                </Label>
+
+                <!-- Item sell stack count -->
+                <Label name="$(parent)SellStackCount" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="RIGHT">
+                    <Dimensions x="40" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetX="670" />
+                </Label>
+
+            </Controls>
+        </Button>
+    </Controls>
+</GuiXml>
