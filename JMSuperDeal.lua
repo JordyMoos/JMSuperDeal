@@ -198,7 +198,7 @@ function ResultTable:initialize()
 
             -- Seller and guild
             JMSuperDealGuiHistoryWindow_Buy_Seller:SetText(
-                data.buy.sellerName .. '   in   ' .. GuildList[data.buy.guildId].name
+                data.buy.sellerName .. '   in   ' .. GuildIdList[data.buy.guildId].name
             )
 --            JMSuperDealGuiHistoryWindow_Buy_Seller:SetText(data.buy.sellerName)
 --            JMSuperDealGuiHistoryWindow_Buy_GuildName:SetText(
