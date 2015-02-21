@@ -68,46 +68,91 @@ local Config = {
 
 --[[
 
- History
+    History table
 
  ]]
 
-local History = {}
+local HistoryData = {
+
+}
 
 ---
--- @param itemLink
 --
-function History:getCodeFromItemLink(itemLink)
-    return string.format(
-        '%d_%d_%d',
-        GetItemLinkQuality(itemLink),
-        GetItemLinkRequiredLevel(itemLink),
-        GetItemLinkRequiredVeteranRank(itemLink)
-    )
+local HistoryTable = {
+    position = 1,
+    rowList = {},
+}
+
+---
+--
+function HistoryTable:initialize()
+    for rowIndex = 1, 10 do
+        local row = CreateControlFromVirtual(
+            'JMSuperDealHistoryRow',
+            JMSuperDealGuiHistoryWindowHistoryBackground,
+            'JMSuperDealHistoryRow',
+            rowIndex
+        );
+        row:SetSimpleAnchorParent(5, (row:GetHeight() + 2) * (rowIndex - 1))
+        row:SetHidden(false)
+
+        self.rowList[rowIndex] = row
+    end
 end
 
 ---
--- @param item
 --
-function History:getSaleListFromItem(item)
-    local itemCode = History:getCodeFromItemLink(item.itemLink)
+function HistoryTable:resetPosition()
+    self.position = 0
+end
 
-    -- Get sale history of this item id
-    local saleList = JMGuildSaleHistoryTracker.getSalesFromItemId(item.itemId)
+---
+--
+function HistoryTable:onScrolled(direction)
+    self:adjustPosition(direction)
+    self:draw()
+end
 
-    -- Remove sales which are not really the same
-    -- Like not having the same level etc
-    -- Desided by the itemCode
-    for saleIndex = #(saleList), 1, -1 do
-        local sale = saleList[saleIndex]
-        local saleCode = History:getCodeFromItemLink(sale.itemLink)
+---
+-- @param direction
+--
+function HistoryTable:adjustPosition(direction)
+    local newPosition = self.position + direction;
 
-        if itemCode ~= saleCode then
-            table.remove(saleList, saleIndex)
+    if (newPosition > #HistoryData - 10) then
+        newPosition = #HistoryData - 10
+    end
+
+    if (newPosition < 1) then
+        newPosition = 0
+    end
+
+    self.position = newPosition;
+end
+
+---
+--
+function HistoryTable:draw()
+    for rowIndex = 1, 10 do
+        local resultRow = self.rowList[rowIndex]
+
+        local sale = HistoryData[rowIndex + self.position]
+        if (sale == nil) then
+            resultRow:SetHidden(true)
+        else
+
+            -- Fill the row
+            resultRow:SetHidden(false)
+            resultRow:GetNamedChild('_Piece'):SetText(sale.price)
+            resultRow:GetNamedChild('_Quantity'):SetText(sale.quantity)
+            resultRow:GetNamedChild('_Price'):SetText(sale.pricePerPiece)
+            resultRow:GetNamedChild('_Buyer'):SetText(
+                sale.buyer  .. '   in   ' .. sale.guildName .. '   from   ' .. sale.seller
+            )
         end
     end
 
-    return saleList
+    JMSuperDealHistoryPaginationSummary:SetText(self.position .. ' - ' .. (math.min(self.position + 10, #HistoryData)) .. ' of ' .. #HistoryData)
 end
 
 --[[
@@ -139,6 +184,8 @@ function ResultTable:initialize()
             local data = ParsedData[rowIndex + self.position]
             local icon = GetItemLinkInfo(data.buy.itemLink)
 
+            d(data.buy.itemLink)
+
             -- Item naming
             JMSuperDealGuiHistoryWindow_Buy_ItemIcon:SetTexture(icon)
             JMSuperDealGuiHistoryWindow_Buy_ItemName:SetText(zo_strformat('<<t:1>>', data.buy.itemLink))
@@ -159,13 +206,13 @@ function ResultTable:initialize()
 --            )
 
             -- Get history
-            local saleList = History:getSaleListFromItem(data.buy)
+            HistoryData = JMSuperDealHistory:getSaleListFromItem(data.buy)
 
             JMSuperDealGuiHistoryWindow:SetHidden(false)
             JMSuperDealGuiHistoryWindow:BringWindowToTop()
 
-            d(#saleList)
-
+            HistoryTable:resetPosition();
+            HistoryTable:draw()
         end)
 
         self.rowList[rowIndex] = row
@@ -312,40 +359,24 @@ end
 -- @param item
 --
 function Parser:getExpensivestSaleFromItem(item)
-    local itemCode = Parser:getCodeFromItemLink(item.itemLink)
-    local saleList = JMGuildSaleHistoryTracker.getSalesFromItemId(item.itemId)
+    local saleList = JMSuperDealHistory:getSaleListFromItem(item)
 
     local mostExpensiveSale
     for _, sale in ipairs(saleList) do
-        local saleCode = Parser:getCodeFromItemLink(sale.itemLink)
         sale.guildIndex = GuildNameList[sale.guildName].index
 
-        if sale.guildIndex ~= 4 and itemCode == saleCode then
+        if sale.pricePerPiece > item.pricePerPiece then
             if not mostExpensiveSale then
                 mostExpensiveSale = sale
             end
 
-            if sale.pricePerPiece > item.pricePerPiece then
-                if sale.pricePerPiece > mostExpensiveSale.pricePerPiece then
-                    mostExpensiveSale = sale
-                end
+            if sale.pricePerPiece > mostExpensiveSale.pricePerPiece then
+                mostExpensiveSale = sale
             end
         end
     end
 
     return mostExpensiveSale
-end
-
----
--- @param itemLink
---
-function Parser:getCodeFromItemLink(itemLink)
-    return string.format(
-        '%d_%d_%d',
-        GetItemLinkQuality(itemLink),
-        GetItemLinkRequiredLevel(itemLink),
-        GetItemLinkRequiredVeteranRank(itemLink)
-    )
 end
 
 ---
@@ -378,6 +409,7 @@ end
 --
 local function Initialize()
     ResultTable:initialize()
+    HistoryTable:initialize()
 
     -- Button to the snapshot creation window
     local showMainWindowButton = JMSuperDealGuiOpenButton
@@ -389,12 +421,10 @@ local function Initialize()
         ResultTable:onScrolled(direction)
     end)
 
-    JMGuildSaleHistoryTracker.registerForEvent(
-        JMGuildSaleHistoryTracker.events.NEW_GUILD_SALES,
-        function (guildId, newSaleList)
-            d('Got ' .. #newSaleList .. ' new sales for guild id ' .. guildId)
-        end
-    )
+    JMSuperDealGuiHistoryWindowHistoryBackground:SetMouseEnabled(true)
+    JMSuperDealGuiHistoryWindowHistoryBackground:SetHandler("OnMouseWheel", function(_, direction)
+        HistoryTable:onScrolled(direction)
+    end)
 end
 
 --[[
