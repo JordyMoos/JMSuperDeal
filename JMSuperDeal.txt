@@ -10,4 +10,5 @@ JMSuperDealHistory.xml
 JMSuperDeal.xml
 
 JMSuperDealHistory.lua
+JMSuperDealFunctionDropdown.lua
 JMSuperDeal.lua
