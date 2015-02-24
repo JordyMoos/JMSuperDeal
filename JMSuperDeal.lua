@@ -152,7 +152,7 @@ function HistoryTable:draw()
         end
     end
 
-    JMSuperDealHistoryPaginationSummary:SetText(self.position .. ' - ' .. (math.min(self.position + 10, #HistoryData)) .. ' of ' .. #HistoryData)
+    JMSuperDealHistoryPaginationSummary:SetText((self.position + 1) .. ' - ' .. (math.min(self.position + 10, #HistoryData)) .. ' of ' .. #HistoryData)
 end
 
 --[[
@@ -207,6 +207,9 @@ function ResultTable:initialize()
 
             -- Get history
             HistoryData = JMSuperDealHistory:getSaleListFromItem(data.buy)
+            table.sort(HistoryData, function (a, b)
+                return a.pricePerPiece > b.pricePerPiece
+            end)
 
             JMSuperDealGuiHistoryWindow:SetHidden(false)
             JMSuperDealGuiHistoryWindow:BringWindowToTop()
@@ -273,7 +276,7 @@ function ResultTable:draw()
         resultRow:GetNamedChild('SellStackCount'):SetText(sell.quantity)
     end
 
-    JMSuperDealResultPaginationSummary:SetText(self.position .. ' - ' .. (self.position + 10) .. ' of ' .. #ParsedData)
+    JMSuperDealResultPaginationSummary:SetText((self.position + 1) .. ' - ' .. (self.position + 10) .. ' of ' .. #ParsedData)
 end
 
 --[[
@@ -336,11 +339,26 @@ end
 -- @param item
 --
 function Parser:addItem(item)
-    local sale = Parser:getExpensivestSaleFromItem(item)
+    local sale = JMSuperDealFunctionDropdown:getSale(item)
 
     if not sale then
         return
     end
+
+    -- Sale is not expensive enough
+    if sale.pricePerPiece <= item.pricePerPiece then
+        return
+    end
+
+    -- Add guildIndex to the sale
+    --
+    -- @todo
+    -- Should be removed we should be happy with the guild name
+    -- and map it to the guildIndex only in places where we want it
+    --
+    -- Also the guild magic might better be off in a other addon
+    -- Or atleast in a other script managing guild related stuff
+    sale.guildIndex = GuildNameList[sale.guildName].index
 
     local profit = (sale.pricePerPiece - item.pricePerPiece) * item.stackCount -- Because we buy 10 items so we get 10 times that profit if we buy this
     local profitPercentage = ((profit / item.stackCount) / item.pricePerPiece) * 100
@@ -353,30 +371,6 @@ function Parser:addItem(item)
             profitPercentage = profitPercentage,
         },
     })
-end
-
----
--- @param item
---
-function Parser:getExpensivestSaleFromItem(item)
-    local saleList = JMSuperDealHistory:getSaleListFromItem(item)
-
-    local mostExpensiveSale
-    for _, sale in ipairs(saleList) do
-        sale.guildIndex = GuildNameList[sale.guildName].index
-
-        if sale.pricePerPiece > item.pricePerPiece then
-            if not mostExpensiveSale then
-                mostExpensiveSale = sale
-            end
-
-            if sale.pricePerPiece > mostExpensiveSale.pricePerPiece then
-                mostExpensiveSale = sale
-            end
-        end
-    end
-
-    return mostExpensiveSale
 end
 
 ---
@@ -410,6 +404,7 @@ end
 local function Initialize()
     ResultTable:initialize()
     HistoryTable:initialize()
+    JMSuperDealFunctionDropdown:initialize()
 
     -- Button to the snapshot creation window
     local showMainWindowButton = JMSuperDealGuiOpenButton
