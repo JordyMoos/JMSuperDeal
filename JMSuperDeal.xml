@@ -20,6 +20,11 @@
                     <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetY="20" offsetX="20" />
                 </Control>
 
+                <Control name="$(parent)MinimumSaleCountDropdown" inherits="ZO_ComboBox">
+                    <Dimensions x="80" y="30" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetY="20" offsetX="330" />
+                </Control>
+
                 <!--
                     Table header
                 -->

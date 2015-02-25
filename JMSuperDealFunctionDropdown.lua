@@ -16,8 +16,7 @@ local FunctionDropdown = JMSuperDealFunctionDropdown
 local FunctionList = {
 
     -- Return the most expensive sale
-    ["Most expensive sale"] = function(item)
-        local saleList = JMSuperDealHistory:getSaleListFromItem(item)
+    ["Most expensive sale"] = function(saleList)
 
         -- Sort on most expensive first
         table.sort(saleList, function (a, b)
@@ -28,8 +27,7 @@ local FunctionList = {
     end,
 
     -- Return the cheapest sale
-    ["Cheapest sale"] = function(item)
-        local saleList = JMSuperDealHistory:getSaleListFromItem(item)
+    ["Cheapest sale"] = function(saleList)
 
         -- Sort on most expensive first
         table.sort(saleList, function (a, b)
@@ -39,32 +37,13 @@ local FunctionList = {
         return saleList[#saleList]
     end,
 
-    -- Return the sale in the middle
-    ["Median sale"] = function(item)
-        local saleList = JMSuperDealHistory:getSaleListFromItem(item)
+    -- Return the median sale
+    ["Median sale"] = function(saleList)
 
         -- Sort on most expensive first
         table.sort(saleList, function (a, b)
             return a.pricePerPiece > b.pricePerPiece
         end)
-
-        local index = math.ceil(#saleList / 2)
-
-        return saleList[index]
-    end,
-
-    -- Return the sale in the middle but only of sales where are atleast 5 of
-    ["Median sale + atleast 5 sales"] = function(item)
-        local saleList = JMSuperDealHistory:getSaleListFromItem(item)
-
-        -- Sort on most expensive first
-        table.sort(saleList, function (a, b)
-            return a.pricePerPiece > b.pricePerPiece
-        end)
-
-        if #saleList < 5 then
-            return
-        end
 
         local index = math.ceil(#saleList / 2)
 
@@ -72,8 +51,7 @@ local FunctionList = {
     end,
 
     -- Return the newest sale
-    ["Newest sale"] = function(item)
-        local saleList = JMSuperDealHistory:getSaleListFromItem(item)
+    ["Newest sale"] = function(saleList)
 
         -- Sort on sale timestamp
         -- The newest will now be the first sale
@@ -93,19 +71,29 @@ local FunctionList = {
 function FunctionDropdown:initialize()
 
     -- Get and clear the dropdown
-    local dropdown = ZO_ComboBox_ObjectFromContainer(JMSuperDealGuiMainWindowFunctionDropdown)
-    dropdown:ClearItems()
-    dropdown:SetSortsItems(false)
+    local functionDropdown = ZO_ComboBox_ObjectFromContainer(JMSuperDealGuiMainWindowFunctionDropdown)
+    functionDropdown:ClearItems()
+    functionDropdown:SetSortsItems(false)
 
     -- Add all the functions
     for name, _ in pairs(FunctionList) do
-        dropdown:AddItem(
-            dropdown:CreateItemEntry(name)
+        functionDropdown:AddItem(
+            functionDropdown:CreateItemEntry(name)
         )
     end
 
     -- And select the first one
-    dropdown:SelectFirstItem()
+    functionDropdown:SelectFirstItem()
+
+    -- The minimul sale count
+    local countDropdown = ZO_ComboBox_ObjectFromContainer(JMSuperDealGuiMainWindowMinimumSaleCountDropdown)
+    countDropdown:ClearItems()
+    for count = 1, 10 do
+        countDropdown:AddItem(
+            countDropdown:CreateItemEntry(count)
+        )
+    end
+    countDropdown:SelectFirstItem()
 end
 
 ---
@@ -113,8 +101,16 @@ end
 -- Use the selected dropdown function to find the sale
 --
 function FunctionDropdown:getSale(item)
-    local dropdown = ZO_ComboBox_ObjectFromContainer(JMSuperDealGuiMainWindowFunctionDropdown)
-    local functionKey = dropdown:GetSelectedItem()
+    local functionDropdown = ZO_ComboBox_ObjectFromContainer(JMSuperDealGuiMainWindowFunctionDropdown)
+    local functionKey = functionDropdown:GetSelectedItem()
 
-    return FunctionList[functionKey](item)
+    local countDropdown = ZO_ComboBox_ObjectFromContainer(JMSuperDealGuiMainWindowMinimumSaleCountDropdown)
+    local minimumSaleCount = tonumber(countDropdown:GetSelectedItem())
+
+    local saleList = JMSuperDealHistory:getSaleListFromItem(item)
+    if minimumSaleCount > #saleList then
+        return
+    end
+
+    return FunctionList[functionKey](saleList)
 end
