@@ -211,7 +211,8 @@ function ResultTable:initialize()
             -- Get history
             HistoryData = JMSuperDealHistory:getSaleListFromItem(data.buy)
             table.sort(HistoryData, function (a, b)
-                return a.pricePerPiece > b.pricePerPiece
+--                return a.pricePerPiece > b.pricePerPiece
+                return a.saleTimestamp > b.saleTimestamp
             end)
 
             JMSuperDealGuiHistoryWindow:SetHidden(false)
