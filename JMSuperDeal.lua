@@ -146,8 +146,11 @@ function HistoryTable:draw()
             resultRow:GetNamedChild('_Piece'):SetText(sale.price)
             resultRow:GetNamedChild('_Quantity'):SetText(sale.quantity)
             resultRow:GetNamedChild('_Price'):SetText(sale.pricePerPiece)
-            resultRow:GetNamedChild('_Buyer'):SetText(
-                sale.buyer  .. '   in   ' .. sale.guildName .. '   from   ' .. sale.seller
+            resultRow:GetNamedChild('_Buyer'):SetText(sale.buyer)
+            resultRow:GetNamedChild('_Guild'):SetText(sale.guildName)
+            resultRow:GetNamedChild('_Seller'):SetText(sale.seller)
+            resultRow:GetNamedChild('_Ago'):SetText(
+                ZO_FormatDurationAgo(GetTimeStamp() - sale.saleTimestamp)
             )
         end
     end
