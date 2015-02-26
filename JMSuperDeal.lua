@@ -201,12 +201,9 @@ function ResultTable:initialize()
 
             -- Seller and guild
             JMSuperDealGuiHistoryWindow_Buy_Seller:SetText(
+                -- @todo map guildId to guildIndex in like GuildIdList
                 data.buy.sellerName .. '   in   ' .. GuildIdList[data.buy.guildId].name
             )
---            JMSuperDealGuiHistoryWindow_Buy_Seller:SetText(data.buy.sellerName)
---            JMSuperDealGuiHistoryWindow_Buy_GuildName:SetText(
---                GuildList[data.buy.guildId].name -- @todo map guildId to guildIndex in like GuildIdList
---            )
 
             -- Get history
             HistoryData = JMSuperDealHistory:getSaleListFromItem(data.buy)
