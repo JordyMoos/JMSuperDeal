@@ -201,12 +201,9 @@ function ResultTable:initialize()
 
             -- Seller and guild
             JMSuperDealGuiHistoryWindow_Buy_Seller:SetText(
+                -- @todo map guildId to guildIndex in like GuildIdList
                 data.buy.sellerName .. '   in   ' .. GuildIdList[data.buy.guildId].name
             )
---            JMSuperDealGuiHistoryWindow_Buy_Seller:SetText(data.buy.sellerName)
---            JMSuperDealGuiHistoryWindow_Buy_GuildName:SetText(
---                GuildList[data.buy.guildId].name -- @todo map guildId to guildIndex in like GuildIdList
---            )
 
             -- Get history
             HistoryData = JMSuperDealHistory:getSaleListFromItem(data.buy)
@@ -217,6 +214,22 @@ function ResultTable:initialize()
 
             JMSuperDealGuiHistoryWindow:SetHidden(false)
             JMSuperDealGuiHistoryWindow:BringWindowToTop()
+
+            local button = JMSuperDealGuiHistoryWindow_LookupButton
+            button:SetHandler('OnClicked', function ()
+                local item = data.buy
+                local guildId = GuildNameList[item.guildName].id
+
+                SelectTradingHouseGuildId(guildId)
+
+                SetTradingHouseFilterRange(TRADING_HOUSE_FILTER_TYPE_ITEM, GetItemLinkItemType(item.itemLink))
+                SetTradingHouseFilterRange(TRADING_HOUSE_FILTER_TYPE_WEAPON, GetItemLinkWeaponType(item.itemLink))
+                SetTradingHouseFilterRange(TRADING_HOUSE_FILTER_TYPE_ARMOR, GetItemLinkArmorType(item.itemLink))
+                SetTradingHouseFilterRange(TRADING_HOUSE_FILTER_TYPE_QUALITY, item.quality)
+                SetTradingHouseFilterRange(TRADING_HOUSE_FILTER_TYPE_PRICE, item.price)
+
+                ExecuteTradingHouseSearch(0, TRADING_HOUSE_SORT_SALE_PRICE, true)
+            end)
 
             HistoryTable:resetPosition();
             HistoryTable:draw()
