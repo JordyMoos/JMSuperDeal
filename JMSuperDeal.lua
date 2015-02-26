@@ -218,6 +218,66 @@ function ResultTable:initialize()
             JMSuperDealGuiHistoryWindow:SetHidden(false)
             JMSuperDealGuiHistoryWindow:BringWindowToTop()
 
+            local button = JMSuperDealGuiHistoryWindow_LookupButton
+            button:SetHandler('OnClicked', function ()
+                local item = data.buy
+                local guildId = GuildNameList[item.guildName].id
+
+                d(item)
+                d('Going to guildId: ' .. guildId)
+
+                SelectTradingHouseGuildId(guildId)
+                zo_callLater(function ()
+
+                    d('--')
+                    d('--')
+                    d('--')
+--                    for i, a in pairs(TRADING_HOUSE) do
+--                        print(i)
+--                    end
+--                    d(GetItemLinkArmorType(item.itemLink))
+
+                    ClearAllTradingHouseSearchTerms()
+
+--                    local filterList = {
+----                        [TRADING_HOUSE_FILTER_TYPE_EQUIP] = { values = {}, isRange = false, },
+----                        [TRADING_HOUSE_FILTER_TYPE_ITEM] = { values = {GetItemLinkItemType(item.itemLink)}, isRange = false, },
+----                        [TRADING_HOUSE_FILTER_TYPE_WEAPON] = { values = {GetItemLinkWeaponType(item.itemLink)}, isRange = false, },
+--                        [TRADING_HOUSE_FILTER_TYPE_ARMOR] = { values = {GetItemLinkArmorType(item.itemLink)}, isRange = false, },
+----                        [TRADING_HOUSE_FILTER_TYPE_TRAIT] = { values = {GetItemLinkTraitInfo(item.itemLink)}, isRange = false, },
+--                        [TRADING_HOUSE_FILTER_TYPE_QUALITY] = { values = {item.quality}, isRange = true, },
+----                        [TRADING_HOUSE_FILTER_TYPE_LEVEL] = { values = {}, isRange = true, },
+--                        [TRADING_HOUSE_FILTER_TYPE_PRICE] = { values = {}, isRange = true, },
+--                        [TRADING_HOUSE_FILTER_TYPE_VETERAN_LEVEL] = { values = {GetItemLinkRequiredVeteranRank(item.itemLink)}, isRange = true, },
+----                        [TRADING_HOUSE_FILTER_TYPE_ENCHANTMENT] = { values = {}, isRange = false, },
+--                    }
+--
+--                    for filterType, filter in pairs(filterList) do
+--                        if(filter.isRange) then
+--                            SetTradingHouseFilterRange(filterType, unpack(filter.values))
+--                        else
+--                            SetTradingHouseFilter(filterType, unpack(filter.values))
+--                        end
+--                    end
+
+                    SetTradingHouseFilterRange(TRADING_HOUSE_FILTER_TYPE_ITEM, GetItemLinkItemType(item.itemLink))
+                    SetTradingHouseFilterRange(TRADING_HOUSE_FILTER_TYPE_WEAPON, GetItemLinkWeaponType(item.itemLink))
+                    SetTradingHouseFilterRange(TRADING_HOUSE_FILTER_TYPE_ARMOR, GetItemLinkArmorType(item.itemLink))
+                    SetTradingHouseFilterRange(TRADING_HOUSE_FILTER_TYPE_LEVEL, GetItemLinkRequiredLevel(item.itemLink))
+                    SetTradingHouseFilterRange(TRADING_HOUSE_FILTER_TYPE_VETERAN_LEVEL, GetItemLinkRequiredVeteranRank(item.itemLink))
+                    SetTradingHouseFilterRange(TRADING_HOUSE_FILTER_TYPE_QUALITY, item.quality)
+                    SetTradingHouseFilterRange(TRADING_HOUSE_FILTER_TYPE_PRICE, item.price)
+
+--                    ZO_PreHook(TRADING_HOUSE.m_search, "InternalExecuteSearch", function(self)
+--                        d('JOH DUDE WAZZA------------------------------')
+--                        self.m_filters[TRADING_HOUSE_FILTER_TYPE_QUALITY].values = {3}
+--                        self.m_filters[TRADING_HOUSE_FILTER_TYPE_PRICE].values = {50}
+--                    end)
+--
+                    ExecuteTradingHouseSearch(0, TRADING_HOUSE_SORT_SALE_PRICE, true)
+                end, 1500)
+            end)
+
             HistoryTable:resetPosition();
             HistoryTable:draw()
         end)

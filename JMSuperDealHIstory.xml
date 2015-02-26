@@ -86,6 +86,12 @@
                     History window buttons
                 -->
 
+                <!-- Lookup button -->
+                <Button name="$(parent)_LookupButton" inherits="ZO_DefaultButton" text="Look me up">
+                    <Dimensions x="120" y="30" />
+                    <Anchor point="TOPRIGHT" offsetX="-5" offsetY="20" />
+                </Button>
+
                 <!-- Close button -->
                 <Button name="$(parent)CloseButton" inherits="ZO_DefaultButton" text="Close">
                     <Dimensions x="120" y="30" />
