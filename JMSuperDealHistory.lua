@@ -16,12 +16,12 @@ local History = JMSuperDealHistory
 --
 function History:getCodeFromItemLink(itemLink)
     return itemLink
---    return string.format(
---        '%d_%d_%d',
---        GetItemLinkQuality(itemLink),
---        GetItemLinkRequiredLevel(itemLink),
---        GetItemLinkRequiredVeteranRank(itemLink)
---    )
+    --    return string.format(
+    --        '%d_%d_%d',
+    --        GetItemLinkQuality(itemLink),
+    --        GetItemLinkRequiredLevel(itemLink),
+    --        GetItemLinkRequiredVeteranRank(itemLink)
+    --    )
 end
 
 ---
