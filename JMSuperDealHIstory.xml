@@ -70,6 +70,23 @@
                     <Anchor point="TOPLEFT" relativeTo="$(parent)_Buy_ItemName" offsetY="22" offsetX="340" />
                 </Label>
 
+                <!-- Buyer and guild -->
+                <Label name="$(parent)_Header_Buyer" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="LEFT" text="Buyer">
+                    <Dimensions x="130" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetY="70" offsetX="340" />
+                </Label>
+                <Label name="$(parent)_Header_Guild" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="LEFT" text="Guild">
+                    <Dimensions x="200" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetY="70" offsetX="480" />
+                </Label>
+                <Label name="$(parent)_Header_Seller" font="ZoFontGame" color="cfdcbd" wrapMode="ELLIPSIS"
+                       verticalAlignment="CENTER" horizontalAlignment="LEFT" text="Seller">
+                    <Dimensions x="130" y="28" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetY="70" offsetX="690" />
+                </Label>
+
                 <!--
                     Pagination
                 -->
