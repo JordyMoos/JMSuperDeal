@@ -17,13 +17,15 @@ end
 ---
 -- Guild Index as key
 --
-local GuildList = {
-
-}
+--local GuildList = {
+--
+--}
 
 -- Guild Id and Name as key
 local GuildIdList = {}
 local GuildNameList = {}
+
+local TradingHouseList = {}
 
 local ParsedData = {
 
@@ -65,6 +67,28 @@ local Config = {
     name = 'JMSuperDeal',
     savedVariablesName = 'JMSuperDealSavedVariables',
 }
+
+--[[
+
+    Trading house
+
+ ]]
+
+local TradingHouse = {}
+
+---
+--
+function TradingHouse:opened()
+    self.isOpen = true
+end
+
+---
+--
+function TradingHouse:closed()
+    self.isOpen = false
+    JMSuperDealGuiMainWindow:SetHidden(true)
+    JMSuperDealGuiHistoryWindow:SetHidden(true)
+end
 
 --[[
 
@@ -202,7 +226,7 @@ function ResultTable:initialize()
             -- Seller and guild
             JMSuperDealGuiHistoryWindow_Buy_Seller:SetText(
                 -- @todo map guildId to guildIndex in like GuildIdList
-                data.buy.sellerName .. '   in   ' .. GuildIdList[data.buy.guildId].name
+                data.buy.sellerName .. '   in   ' .. data.buy.guildName
             )
 
             -- Get history
@@ -218,7 +242,7 @@ function ResultTable:initialize()
             local button = JMSuperDealGuiHistoryWindow_LookupButton
             button:SetHandler('OnClicked', function ()
                 local item = data.buy
-                local guildId = GuildNameList[item.guildName].id
+                local guildId = TradingHouseList[item.guildName]
 
                 SelectTradingHouseGuildId(guildId)
 
@@ -288,7 +312,7 @@ function ResultTable:draw()
         resultRow:GetNamedChild('ProfitValue'):SetText(profit.profit)
         resultRow:GetNamedChild('BuyPricePerPiece'):SetText(item.pricePerPiece)
         resultRow:GetNamedChild('BuyStackCount'):SetText(item.stackCount)
-        resultRow:GetNamedChild('GuildIds'):SetText(item.guildId .. ' -> ' .. sell.guildIndex)
+        resultRow:GetNamedChild('GuildIds'):SetText(item.guildName .. ' -> ' .. sell.guildName)
         resultRow:GetNamedChild('SellPricePerPiece'):SetText(sell.pricePerPiece)
         resultRow:GetNamedChild('SellStackCount'):SetText(sell.quantity)
     end
@@ -316,24 +340,27 @@ function Parser:startParsing()
     d('Start parsing')
 
     -- Clear our cached data
-    GuildList = {}
+--    GuildList = {}
     ParsedData = {}
 
     -- Make sure we have a snapshot
     d('Fetching snapshot')
     local snapshot = JMTradingHouseSnapshot.getSnapshot()
-    if not snapshot.creationTimestamp then
+    if not snapshot.lastChangeTimestamp then
         d('We could not fetch the snapshot')
         return
     end
 
-    Parser:fetchGuildList()
+    Parser:fetchTradingHouseList()
+--    Parser:fetchGuildList()
 
     -- Items are listen per guild
     -- So loop through those guilds
-    for _, itemList in pairs(snapshot.tradingHouseItemList) do
-        for _, item in ipairs(itemList) do
-            self:addItem(item)
+    for guildName, data in pairs(snapshot.tradingHouseList) do
+        if TradingHouseList[guildName] then
+            for _, item in ipairs(data.itemList) do
+                self:addItem(item)
+            end
         end
     end
 
@@ -367,16 +394,6 @@ function Parser:addItem(item)
         return
     end
 
-    -- Add guildIndex to the sale
-    --
-    -- @todo
-    -- Should be removed we should be happy with the guild name
-    -- and map it to the guildIndex only in places where we want it
-    --
-    -- Also the guild magic might better be off in a other addon
-    -- Or atleast in a other script managing guild related stuff
-    sale.guildIndex = GuildNameList[sale.guildName].index
-
     local profit = (sale.pricePerPiece - item.pricePerPiece) * item.stackCount -- Because we buy 10 items so we get 10 times that profit if we buy this
     local profitPercentage = ((profit / item.stackCount) / item.pricePerPiece) * 100
 
@@ -390,24 +407,33 @@ function Parser:addItem(item)
     })
 end
 
+function Parser:fetchTradingHouseList()
+    TradingHouseList = {}
+    for index = 1, GetNumTradingHouseGuilds() do
+        local guildId, guildName, _ = GetTradingHouseGuildDetails(index)
+
+        TradingHouseList[guildName] = guildId
+    end
+end
+
 ---
 --
 --
-function Parser:fetchGuildList()
-    for guildIndex = 1, GetNumGuilds() do
-        local id = GetGuildId(guildIndex)
-        local name = GetGuildName(id)
-
-        GuildList[guildIndex] = {
-            index = guildIndex,
-            id = id,
-            name = name,
-        }
-
-        GuildIdList[id] = GuildList[guildIndex]
-        GuildNameList[name] = GuildList[guildIndex]
-    end
-end
+--function Parser:fetchGuildList()
+--    for guildIndex = 1, GetNumGuilds() do
+--        local id = GetGuildId(guildIndex)
+--        local name = GetGuildName(id)
+--
+--        GuildList[guildIndex] = {
+--            index = guildIndex,
+--            id = id,
+--            name = name,
+--        }
+--
+--        GuildIdList[id] = GuildList[guildIndex]
+--        GuildNameList[name] = GuildList[guildIndex]
+--    end
+--end
 
 --[[
 
@@ -437,6 +463,21 @@ local function Initialize()
     JMSuperDealGuiHistoryWindowHistoryBackground:SetHandler("OnMouseWheel", function(_, direction)
         HistoryTable:onScrolled(direction)
     end)
+
+    EVENT_MANAGER:RegisterForEvent(
+        Config.name,
+        EVENT_OPEN_TRADING_HOUSE,
+        function ()
+            TradingHouse:opened()
+        end
+    )
+    EVENT_MANAGER:RegisterForEvent(
+        Config.name,
+        EVENT_CLOSE_TRADING_HOUSE,
+        function ()
+            TradingHouse:closed()
+        end
+    )
 end
 
 --[[
