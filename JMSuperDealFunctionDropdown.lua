@@ -14,7 +14,6 @@ local FunctionDropdown = JMSuperDealFunctionDropdown
 -- List of function algorithms
 --
 local FunctionList = {
-
     -- Return the most expensive sale
     ["Most expensive sale"] = function(saleList)
 
@@ -76,9 +75,9 @@ function FunctionDropdown:initialize()
     functionDropdown:SetSortsItems(false)
 
     -- Add all the functions
-    for name, _ in pairs(FunctionList) do
+    for _, description in pairs(JMPriceSuggestion.algorithms) do
         functionDropdown:AddItem(
-            functionDropdown:CreateItemEntry(name)
+            functionDropdown:CreateItemEntry(description)
         )
     end
 
@@ -112,5 +111,8 @@ function FunctionDropdown:getSale(item)
         return
     end
 
-    return FunctionList[functionKey](saleList)
+--    return FunctionList[functionKey](saleList)
+    local result = JMPriceSuggestion.getPriceSuggestion(item.itemLink, functionKey)
+
+    return result.bestPrice
 end
