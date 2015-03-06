@@ -389,7 +389,7 @@ function Parser:addItem(item, taxPercentage)
     local profitPercentage = ((profit / item.stackCount) / item.pricePerPiece) * 100
     
     -- Sale is not profitable
-    if profit < 0
+    if profit < 0 then
         return
     end
 
