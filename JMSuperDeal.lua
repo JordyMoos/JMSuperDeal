@@ -357,7 +357,7 @@ function Parser:startParsing()
     for guildName, data in pairs(snapshot.tradingHouseList) do
         if TradingHouseList[guildName] then
             for _, item in ipairs(data.itemList) do
-                self:addItem(item)
+                self:addItem(item, data.listingPercentage + data.cutPercentage)
             end
         end
     end
@@ -377,12 +377,15 @@ end
 -- @param guildId
 -- @param item
 --
-function Parser:addItem(item)
+function Parser:addItem(item, taxPercentage)
     local priceSuggestion = JMSuperDealFunctionDropdown:getSale(item)
 
     if not priceSuggestion then
         return
     end
+    
+    -- correct for listing fee and guild cut
+    priceSuggestion.pricePerPiece = Math.ceil(priceSuggestion.pricePerPiece * (100 - taxPercentage) / 100)
 
     -- Sale is not expensive enough
     if priceSuggestion.pricePerPiece <= item.pricePerPiece then
