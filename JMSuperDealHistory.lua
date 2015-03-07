@@ -25,24 +25,26 @@ local History = JMSuperDealHistory
 --end
 
 function History:getCodeFromItemLink(itemLink)
-    local _, setName = GetItemLinkSetInfo(itemLink)
-    local glyphMinLevel, glyphMaxLevel, glyphMinVetLevel, glyphMaxVetLevel = GetItemLinkGlyphMinMaxLevels(itemLink)
+    return itemLink
 
-    return string.format(
-        '%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s',
-        GetItemLinkQuality(itemLink),
-        GetItemLinkRequiredLevel(itemLink),
-        GetItemLinkRequiredVeteranRank(itemLink),
-        GetItemLinkWeaponPower(itemLink),
-        GetItemLinkArmorRating(itemLink),
-        GetItemLinkValue(itemLink),
-        GetItemLinkMaxEnchantCharges(itemLink),
-        setName,
-        glyphMinLevel or '',
-        glyphMaxLevel or '',
-        glyphMinVetLevel or '',
-        glyphMaxVetLevel or ''
-    )
+--    local _, setName = GetItemLinkSetInfo(itemLink)
+--    local glyphMinLevel, glyphMaxLevel, glyphMinVetLevel, glyphMaxVetLevel = GetItemLinkGlyphMinMaxLevels(itemLink)
+--
+--    return string.format(
+--        '%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s',
+--        GetItemLinkQuality(itemLink),
+--        GetItemLinkRequiredLevel(itemLink),
+--        GetItemLinkRequiredVeteranRank(itemLink),
+--        GetItemLinkWeaponPower(itemLink),
+--        GetItemLinkArmorRating(itemLink),
+--        GetItemLinkValue(itemLink),
+--        GetItemLinkMaxEnchantCharges(itemLink),
+--        setName,
+--        glyphMinLevel or '',
+--        glyphMaxLevel or '',
+--        glyphMinVetLevel or '',
+--        glyphMaxVetLevel or ''
+--    )
 end
 
 ---

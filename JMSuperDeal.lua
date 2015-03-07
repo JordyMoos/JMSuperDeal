@@ -314,7 +314,6 @@ function ResultTable:draw()
         resultRow:GetNamedChild('BuyStackCount'):SetText(item.stackCount)
         resultRow:GetNamedChild('GuildIds'):SetText(item.guildName .. ' -> ' .. sell.guildName)
         resultRow:GetNamedChild('SellPricePerPiece'):SetText(sell.pricePerPiece)
-        resultRow:GetNamedChild('SellStackCount'):SetText(sell.quantity)
     end
 
     JMSuperDealResultPaginationSummary:SetText((self.position + 1) .. ' - ' .. (self.position + 10) .. ' of ' .. #ParsedData)
@@ -352,20 +351,16 @@ function Parser:startParsing()
     end
 
     Parser:fetchTradingHouseList()
---    Parser:fetchGuildList()
 
     -- Items are listen per guild
     -- So loop through those guilds
     for guildName, data in pairs(snapshot.tradingHouseList) do
         if TradingHouseList[guildName] then
             for _, item in ipairs(data.itemList) do
-                self:addItem(item)
+                self:addItem(item, data.listingPercentage + data.cutPercentage)
             end
         end
     end
-
-    d('Calculate potential profit')
---    Calculator:calculatePotentialProfit()
 
     -- Sort the most profit table
     table.sort(ParsedData, function (a, b)
@@ -382,24 +377,25 @@ end
 -- @param guildId
 -- @param item
 --
-function Parser:addItem(item)
-    local sale = JMSuperDealFunctionDropdown:getSale(item)
+function Parser:addItem(item, taxPercentage)
+    local priceSuggestion = JMSuperDealFunctionDropdown:getSale(item)
 
-    if not sale then
+    if not priceSuggestion then
         return
     end
 
-    -- Sale is not expensive enough
-    if sale.pricePerPiece <= item.pricePerPiece then
-        return
-    end
-
-    local profit = (sale.pricePerPiece - item.pricePerPiece) * item.stackCount -- Because we buy 10 items so we get 10 times that profit if we buy this
+    -- Because we buy 10 items so we get 10 times that profit if we buy this
+    local profit = (priceSuggestion.pricePerPiece * (100 - taxPercentage) / 100 - item.pricePerPiece) * item.stackCount 
     local profitPercentage = ((profit / item.stackCount) / item.pricePerPiece) * 100
+    
+    -- Sale is not profitable
+    if profit < 0 then
+        return
+    end
 
     table.insert(ParsedData, {
         buy = item,
-        sell = sale,
+        sell = priceSuggestion,
         profit = {
             profit = profit,
             profitPercentage = profitPercentage,

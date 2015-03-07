@@ -1,5 +1,5 @@
 ## Title: JMSuperDeal
-## APIVersion: 100010
+## APIVersion: 100011
 ## DependsOn: JMTradingHouseSnapshot JMGuildSaleHistoryTracker
 ## SavedVariables: JMSuperDealSavedVariables
 ## Version: 0.1
