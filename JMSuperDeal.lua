@@ -368,24 +368,6 @@ function Parser:startParsing()
     zo_callLater(function()
         Parser:parseGuild(1)
     end, 100)
-
---    -- Items are listen per guild
---    -- So loop through those guilds
---    for guildName, data in pairs(snapshot.tradingHouseList) do
---        if TradingHouseList[guildName] then
---            for _, item in ipairs(data.itemList) do
---                self:addItem(item, data.listingPercentage + data.cutPercentage)
---            end
---        end
---    end
---
---    -- Sort the most profit table
---    table.sort(ParsedData, function (a, b)
---        return a.profit.profitPercentage > b.profit.profitPercentage
---    end)
---
---    ResultTable:resetPosition();
---    ResultTable:draw()
 end
 
 function Parser:parseGuild(fakeGuildIndex)
