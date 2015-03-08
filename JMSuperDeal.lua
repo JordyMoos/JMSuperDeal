@@ -331,8 +331,6 @@ end
 local Parser = {
     snapshot = nil,
     guildMap = {},
-    currentFakeGuildIndex = nil,
-    currentItemCount = nil,
 }
 
 ---
@@ -366,30 +364,39 @@ function Parser:startParsing()
 
     -- Start with the first guild
     zo_callLater(function()
-        Parser:parseGuild(1)
-    end, 100)
+        Parser:parseGuild(1, 1)
+    end, 1)
 end
 
-function Parser:parseGuild(fakeGuildIndex)
+function Parser:parseGuild(fakeGuildIndex, itemIndex)
     local currentGuildName = self.guildMap[fakeGuildIndex]
     if not currentGuildName then
         return self:finishParsing();
     end
 
     local data = self.snapshot.tradingHouseList[currentGuildName]
-    for _, item in ipairs(data.itemList) do
-        self:addItem(item, data.listingPercentage + data.cutPercentage)
+    local limit = math.min(itemIndex + 250, #(data.itemList))
+
+    for index = itemIndex, limit do
+        self:addItem(data.itemList[index], data.listingPercentage + data.cutPercentage)
     end
 
-    zo_callLater(function()
-        Parser:parseGuild(fakeGuildIndex + 1)
-    end, 100)
+    if limit < #(data.itemList) then
+        zo_callLater(function()
+            Parser:parseGuild(fakeGuildIndex, limit + 1)
+        end, 1)
+    else
+        zo_callLater(function()
+            Parser:parseGuild(fakeGuildIndex + 1, 1)
+        end, 1)
+    end
 end
 
 function Parser:finishParsing()
     -- Sort the most profit table
     table.sort(ParsedData, function (a, b)
-        return a.profit.profitPercentage > b.profit.profitPercentage
+--        return a.profit.profitPercentage > b.profit.profitPercentage
+        return a.profit.profit > b.profit.profit
     end)
 
     ResultTable:resetPosition();
