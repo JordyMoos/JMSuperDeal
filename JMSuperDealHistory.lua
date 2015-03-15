@@ -24,6 +24,16 @@ local History = JMSuperDealHistory
 --    --    )
 --end
 
+function History:getCodeFromItemLinkNew(itemLink)
+    local array = {ZO_LinkHandler_ParseLink(itemLink)}
+    array[6] = 0 -- Looted from
+    array[20] = 0 -- Crafted
+    array[22] = 0 -- Stolen
+    array[23] = 0 -- Condition
+
+    return table.concat(array, '_')
+end
+
 function History:getCodeFromItemLink(itemLink)
 --    return itemLink
 

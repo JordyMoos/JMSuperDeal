@@ -165,6 +165,9 @@ function HistoryTable:draw()
             resultRow:SetHidden(true)
         else
 
+--            d(rowIndex .. ' -> ' .. JMSuperDealHistory:getCodeFromItemLinkNew(sale.itemLink))
+--            d(sale.itemLink)
+
             -- Fill the row
             resultRow:SetHidden(false)
             resultRow:GetNamedChild('_Piece'):SetText(sale.price)
@@ -375,7 +378,7 @@ function Parser:parseGuild(fakeGuildIndex, itemIndex)
     end
 
     local data = self.snapshot.tradingHouseList[currentGuildName]
-    local limit = math.min(itemIndex + 250, #(data.itemList))
+    local limit = math.min(itemIndex + 20, #(data.itemList))
 
     for index = itemIndex, limit do
         self:addItem(data.itemList[index], data.listingPercentage + data.cutPercentage)
@@ -384,19 +387,19 @@ function Parser:parseGuild(fakeGuildIndex, itemIndex)
     if limit < #(data.itemList) then
         zo_callLater(function()
             Parser:parseGuild(fakeGuildIndex, limit + 1)
-        end, 1)
+        end, 10)
     else
         zo_callLater(function()
             Parser:parseGuild(fakeGuildIndex + 1, 1)
-        end, 1)
+        end, 10)
     end
 end
 
 function Parser:finishParsing()
     -- Sort the most profit table
     table.sort(ParsedData, function (a, b)
---        return a.profit.profitPercentage > b.profit.profitPercentage
-        return a.profit.profit > b.profit.profit
+        return a.profit.profitPercentage > b.profit.profitPercentage
+--        return a.profit.profit > b.profit.profit
     end)
 
     ResultTable:resetPosition();
@@ -429,7 +432,7 @@ function Parser:addItem(item, taxPercentage)
         buy = item,
         sell = priceSuggestion,
         profit = {
-            profit = profit,
+            profit = math.ceil(profit),
             profitPercentage = profitPercentage,
         },
     })

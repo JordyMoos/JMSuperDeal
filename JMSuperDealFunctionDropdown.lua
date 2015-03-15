@@ -107,12 +107,17 @@ function FunctionDropdown:getSale(item)
     local minimumSaleCount = tonumber(countDropdown:GetSelectedItem())
 
     local saleList = JMSuperDealHistory:getSaleListFromItem(item)
+
     if minimumSaleCount > #saleList then
         return
     end
 
 --    return FunctionList[functionKey](saleList)
     local result = JMPriceSuggestion.getPriceSuggestion(item.itemLink, functionKey)
+
+    if not result.hasPrice then
+        return false
+    end
 
     return result.bestPrice
 end
