@@ -398,8 +398,8 @@ end
 function Parser:finishParsing()
     -- Sort the most profit table
     table.sort(ParsedData, function (a, b)
-        return a.profit.profitPercentage > b.profit.profitPercentage
---        return a.profit.profit > b.profit.profit
+--        return a.profit.profitPercentage > b.profit.profitPercentage
+        return a.profit.profit > b.profit.profit
     end)
 
     ResultTable:resetPosition();
