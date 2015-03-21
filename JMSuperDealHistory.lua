@@ -86,7 +86,7 @@ end
 -- @param item
 --
 function History:getSaleListFromItem(item)
-    local itemCode = History:getCodeFromItemLink(item.itemLink)
+    local itemCode = JMItemCode.getCode(item.itemLink)
 
     -- Get sale history of this item id
     local saleList = JMGuildSaleHistoryTracker.getSalesFromItemId(item.itemId)
@@ -96,7 +96,7 @@ function History:getSaleListFromItem(item)
     -- Desided by the itemCode
     for saleIndex = #(saleList), 1, -1 do
         local sale = saleList[saleIndex]
-        local saleCode = History:getCodeFromItemLink(sale.itemLink)
+        local saleCode = JMItemCode.getCode(sale.itemLink)
 
         if itemCode ~= saleCode then
             table.remove(saleList, saleIndex)

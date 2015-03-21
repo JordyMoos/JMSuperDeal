@@ -68,6 +68,8 @@ local Config = {
     savedVariablesName = 'JMSuperDealSavedVariables',
 }
 
+local SavedVariables = {}
+
 --[[
 
     Trading house
@@ -354,6 +356,7 @@ function Parser:startParsing()
         return
     end
 
+    JMSuperDealGuiMainWindowScanButton:SetEnabled(false)
     Parser:fetchTradingHouseList()
 
     -- Map all the guilds to numbers so its easier to work with
@@ -378,7 +381,7 @@ function Parser:parseGuild(fakeGuildIndex, itemIndex)
     end
 
     local data = self.snapshot.tradingHouseList[currentGuildName]
-    local limit = math.min(itemIndex + 20, #(data.itemList))
+    local limit = math.min(itemIndex + 500, #(data.itemList))
 
     for index = itemIndex, limit do
         self:addItem(data.itemList[index], data.listingPercentage + data.cutPercentage)
@@ -404,6 +407,8 @@ function Parser:finishParsing()
 
     ResultTable:resetPosition();
     ResultTable:draw()
+
+    JMSuperDealGuiMainWindowScanButton:SetEnabled(true)
 end
 
 ---
@@ -476,6 +481,17 @@ end
 -- Start of the addon
 --
 local function Initialize()
+    -- Load the saved variables
+    SavedVariables = ZO_SavedVars:NewAccountWide(Config.savedVariablesName, 1, nil, {
+        settings = {
+            filters = {
+                algorithm = nil,
+                minimumCount = nil,
+                minimumAge = nil,
+            }
+        }
+    })
+
     ResultTable:initialize()
     HistoryTable:initialize()
     JMSuperDealFunctionDropdown:initialize()
