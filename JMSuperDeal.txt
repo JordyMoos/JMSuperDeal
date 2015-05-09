@@ -6,7 +6,7 @@
 ## Author: Jordy Moos
 ## Description: SUPER DEAL!
 
-JMSuperDealHistory.xml
+JMSuperDealHistoryWindow.xml
 JMSuperDeal.xml
 
 JMSuperDealHistory.lua

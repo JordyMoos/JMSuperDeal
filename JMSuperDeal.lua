@@ -559,3 +559,9 @@ JMSuperDeal = {
         Parser:startParsing()
     end,
 }
+
+---
+--
+SLASH_COMMANDS['/jm_test'] = function()
+    d(JMSuperDealHistory)
+end
