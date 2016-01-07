@@ -9,6 +9,8 @@
 
  ]]
 
+local JM_DEBUG = {}
+
 JMSuperDealGuiDetailWindow = {}
 function JMSuperDealGuiDetailWindow:show(button)
     d(button)
@@ -425,9 +427,9 @@ function Parser:addItem(item, taxPercentage)
     end
 
     -- Because we buy 10 items so we get 10 times that profit if we buy this
-    local profit = (priceSuggestion.pricePerPiece * (100 - taxPercentage) / 100 - item.pricePerPiece) * item.stackCount 
+    local profit = (priceSuggestion.pricePerPiece * (100 - taxPercentage) / 100 - item.pricePerPiece) * item.stackCount
     local profitPercentage = ((profit / item.stackCount) / item.pricePerPiece) * 100
-    
+
     -- Sale is not profitable
     if profit < 0 then
         return
@@ -481,6 +483,7 @@ end
 -- Start of the addon
 --
 local function Initialize()
+    zo_callLater(function() d('In initialize') end, 5000);
     -- Load the saved variables
     SavedVariables = ZO_SavedVars:NewAccountWide(Config.savedVariablesName, 1, nil, {
         settings = {
@@ -491,6 +494,8 @@ local function Initialize()
             }
         }
     })
+
+    zo_callLater(function() d('After saved variables') end, 5000);
 
     ResultTable:initialize()
     HistoryTable:initialize()
@@ -525,6 +530,8 @@ local function Initialize()
             TradingHouse:closed()
         end
     )
+
+    zo_callLater(function() d('All set') end, 5000);
 end
 
 --[[
@@ -533,14 +540,21 @@ end
 
  ]]
 
+JM_DEBUG1 = {
+    load_list = {},
+}
+
 --- Adding the initialize handler
 EVENT_MANAGER:RegisterForEvent(
-    Config.name,
+    'JMSuperDeal',
     EVENT_ADD_ON_LOADED,
     function (event, addonName)
+        table.insert(JM_DEBUG1.load_list, addonName)
         if addonName ~= Config.name then
             return
         end
+
+        zo_callLater(function() d('Added found ' + event + ' - ' + addonName) end, 5000);
 
         Initialize()
         EVENT_MANAGER:UnregisterForEvent(Config.name, EVENT_ADD_ON_LOADED)
@@ -563,5 +577,5 @@ JMSuperDeal = {
 ---
 --
 SLASH_COMMANDS['/jm_test'] = function()
-    d(JMSuperDealHistory)
+    d(JMSuperDealFunctionDropdown.debug)
 end

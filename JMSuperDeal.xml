@@ -97,17 +97,8 @@
             Toggle button that shows the main window.
             Placed on the official trading house window
         -->
-        <!--
         <Button name="JMSuperDealGuiOpenButton" inherits="ZO_DefaultButton" text="JMSuperDeal">
             <Anchor point="BOTTOM" relativeTo="JMTradingHouseSnapshotGuiOpenButton" relativePoint="BOTTOM" offsetY="80" />
-            <OnClicked>
-                JMSuperDealGuiMainWindow:ToggleHidden()
-                JMSuperDealGuiMainWindow:BringWindowToTop()
-            </OnClicked>
-        </Button>
-        -->
-        <Button name="JMSuperDealGuiOpenButton" inherits="ZO_DefaultButton" text="JMSuperDeal">
-            <Anchor point="BOTTOM" relativeTo="ZO_TradingHouseLeftPaneBrowseItemsCommonQuality" relativePoint="BOTTOM" offsetY="80" />
             <OnClicked>
                 JMSuperDealGuiMainWindow:ToggleHidden()
                 JMSuperDealGuiMainWindow:BringWindowToTop()
