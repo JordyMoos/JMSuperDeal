@@ -11,58 +11,6 @@ JMSuperDealFunctionDropdown = {}
 local FunctionDropdown = JMSuperDealFunctionDropdown
 
 ---
--- List of function algorithms
---
-local FunctionList = {
-    -- Return the most expensive sale
-    ["Most expensive sale"] = function(saleList)
-
-        -- Sort on most expensive first
-        table.sort(saleList, function (a, b)
-            return a.pricePerPiece > b.pricePerPiece
-        end)
-
-        return saleList[1]
-    end,
-
-    -- Return the cheapest sale
-    ["Cheapest sale"] = function(saleList)
-
-        -- Sort on most expensive first
-        table.sort(saleList, function (a, b)
-            return a.pricePerPiece > b.pricePerPiece
-        end)
-
-        return saleList[#saleList]
-    end,
-
-    -- Return the median sale
-    ["Median sale"] = function(saleList)
-
-        -- Sort on most expensive first
-        table.sort(saleList, function (a, b)
-            return a.pricePerPiece > b.pricePerPiece
-        end)
-
-        local index = math.ceil(#saleList / 2)
-
-        return saleList[index]
-    end,
-
-    -- Return the newest sale
-    ["Newest sale"] = function(saleList)
-
-        -- Sort on sale timestamp
-        -- The newest will now be the first sale
-        table.sort(saleList, function (a, b)
-            return a.saleTimestamp > b.saleTimestamp
-        end)
-
-        return saleList[1]
-    end,
-}
-
----
 -- Initialize the Function Dropdown
 --
 -- Add the function algorithms to the dropdown
@@ -77,12 +25,13 @@ function FunctionDropdown:initialize()
     -- Add all the functions
     for _, description in pairs(JMPriceSuggestion.algorithms) do
         functionDropdown:AddItem(
-            functionDropdown:CreateItemEntry(description)
+            functionDropdown:CreateItemEntry(description, function (value)
+
+            end)
         )
     end
+    functionDropdown:SelectItem()
 
-    -- And select the first one
-    functionDropdown:SelectFirstItem()
 
     -- The minimul sale count
     local countDropdown = ZO_ComboBox_ObjectFromContainer(JMSuperDealGuiMainWindowMinimumSaleCountDropdown)
@@ -93,6 +42,17 @@ function FunctionDropdown:initialize()
         )
     end
     countDropdown:SelectFirstItem()
+
+
+    -- The minimul sale age
+    local ageDropdown = ZO_ComboBox_ObjectFromContainer(JMSuperDealGuiMainWindowMinimumSaleAgeDropdown)
+    ageDropdown:ClearItems()
+    for age = 1, 10 do
+        ageDropdown:AddItem(
+            ageDropdown:CreateItemEntry(age)
+        )
+    end
+    ageDropdown:SelectFirstItem()
 end
 
 ---
@@ -103,16 +63,34 @@ function FunctionDropdown:getSale(item)
     local functionDropdown = ZO_ComboBox_ObjectFromContainer(JMSuperDealGuiMainWindowFunctionDropdown)
     local functionKey = functionDropdown:GetSelectedItem()
 
+    -- Count filter
     local countDropdown = ZO_ComboBox_ObjectFromContainer(JMSuperDealGuiMainWindowMinimumSaleCountDropdown)
     local minimumSaleCount = tonumber(countDropdown:GetSelectedItem())
 
     local saleList = JMSuperDealHistory:getSaleListFromItem(item)
+
     if minimumSaleCount > #saleList then
         return
     end
 
---    return FunctionList[functionKey](saleList)
+    -- Age filter
+    local ageDropdown = ZO_ComboBox_ObjectFromContainer(JMSuperDealGuiMainWindowMinimumSaleAgeDropdown)
+    local minimumSaleAge = tonumber(ageDropdown:GetSelectedItem())
+
+    local newestSaleTime = 0
+    for _, sale in ipairs(saleList) do
+        newestSaleTime = math.max(newestSaleTime, sale.saleTimestamp)
+    end
+
+    if newestSaleTime < (GetTimeStamp() - (60 * 60 * 24 * minimumSaleAge)) then
+        return
+    end
+
     local result = JMPriceSuggestion.getPriceSuggestion(item.itemLink, functionKey)
+
+    if not result.hasPrice then
+        return false
+    end
 
     return result.bestPrice
 end

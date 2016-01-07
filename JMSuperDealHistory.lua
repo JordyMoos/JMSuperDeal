@@ -24,6 +24,16 @@ local History = JMSuperDealHistory
 --    --    )
 --end
 
+function History:getCodeFromItemLinkNew(itemLink)
+    local array = {ZO_LinkHandler_ParseLink(itemLink)}
+    array[6] = 0 -- Looted from
+    array[20] = 0 -- Crafted
+    array[22] = 0 -- Stolen
+    array[23] = 0 -- Condition
+
+    return table.concat(array, '_')
+end
+
 function History:getCodeFromItemLink(itemLink)
 --    return itemLink
 
@@ -76,7 +86,7 @@ end
 -- @param item
 --
 function History:getSaleListFromItem(item)
-    local itemCode = History:getCodeFromItemLink(item.itemLink)
+    local itemCode = JMItemCode.getCode(item.itemLink)
 
     -- Get sale history of this item id
     local saleList = JMGuildSaleHistoryTracker.getSalesFromItemId(item.itemId)
@@ -86,7 +96,7 @@ function History:getSaleListFromItem(item)
     -- Desided by the itemCode
     for saleIndex = #(saleList), 1, -1 do
         local sale = saleList[saleIndex]
-        local saleCode = History:getCodeFromItemLink(sale.itemLink)
+        local saleCode = JMItemCode.getCode(sale.itemLink)
 
         if itemCode ~= saleCode then
             table.remove(saleList, saleIndex)

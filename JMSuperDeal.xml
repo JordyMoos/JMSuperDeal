@@ -25,6 +25,11 @@
                     <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetY="20" offsetX="330" />
                 </Control>
 
+                <Control name="$(parent)MinimumSaleAgeDropdown" inherits="ZO_ComboBox">
+                    <Dimensions x="80" y="30" />
+                    <Anchor point="CENTERLEFT" relativeTo="$(parent)" offsetY="20" offsetX="440" />
+                </Control>
+
                 <!--
                     Table header
                 -->
@@ -93,7 +98,7 @@
             Placed on the official trading house window
         -->
         <Button name="JMSuperDealGuiOpenButton" inherits="ZO_DefaultButton" text="JMSuperDeal">
-            <Anchor point="BOTTOM" relativeTo="JMTradingHouseSnapshotGuiOpenButton" relativePoint="BOTTOM" offsetY="50" />
+            <Anchor point="BOTTOM" relativeTo="JMTradingHouseSnapshotGuiOpenButton" relativePoint="BOTTOM" offsetY="80" />
             <OnClicked>
                 JMSuperDealGuiMainWindow:ToggleHidden()
                 JMSuperDealGuiMainWindow:BringWindowToTop()
